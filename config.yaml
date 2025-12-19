@@ -1,0 +1,21 @@
+
+redmine:
+  base_url: ""
+  api_key: ""
+  project_identifier: ""  # Optional: specify project identifier to filter tasks (leave empty for all projects)
+
+azure_devops:
+  organization: "ProductivityToolsPSPC"         # Azure DevOps organization name
+  project: "SERC"          # Azure DevOps project name
+  pat: ""     # Personal Access Token with Work Items (Read) permission
+
+output:
+  excel_path: "project-fields.xlsx"
+  ado_fields_excel_path: "ado-fields.xlsx"
+
+runtime:
+  include_issue_custom_fields: true     # uses projects?include=issue_custom_fields
+  include_trackers: true                # uses projects?include=trackers
+  admin_custom_fields: false            # set true ONLY if you have admin rights to call /custom_fields.json
+  delay_ms: 50
+  batch_size: 10
