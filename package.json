@@ -1,0 +1,19 @@
+{
+  "name": "redmin-migration-serc",
+  "version": "1.0.0",
+  "description": "",
+  "license": "ISC",
+  "author": "",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "axios": "^1.13.2",
+    "exceljs": "^4.4.0",
+    "fs-extra": "^11.3.2",
+    "puppeteer": "^24.33.0",
+    "yaml": "^2.8.2"
+  }
+}

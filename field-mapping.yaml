@@ -1,0 +1,368 @@
+# Redmine to Azure DevOps Field Mapping Configuration
+# This file defines how Redmine fields map to Azure DevOps work item fields
+
+# ==============================================================================
+# WORK ITEM TYPE MAPPING
+# Maps Redmine trackers to Azure DevOps work item types
+# Available ADO types depend on your process template:
+#   - Basic: Issue, Task, Epic
+#   - Agile: User Story, Task, Bug, Feature, Epic, Issue, Test Case
+#   - Scrum: Product Backlog Item, Task, Bug, Feature, Epic, Impediment, Test Case
+#   - CMMI: Requirement, Task, Bug, Feature, Epic, Issue, Risk, Review
+# ==============================================================================
+work_item_types:
+  # Redmine Tracker Name: ADO Work Item Type
+  # All Redmine trackers will be migrated as ADO Issues
+  Feature: "Issue"
+  Task: "Issue"
+  Bug: "Issue"
+  Epic: "Issue"
+  Story: "Issue"
+  default: "Issue"
+
+# ==============================================================================
+# STANDARD FIELD MAPPING
+# Maps Redmine standard fields to ADO system fields
+# Field Type Reference:
+#   - Text: System.Title, System.Description, System.History
+#   - Dropdown: System.State, Microsoft.VSTS.Common.Priority
+#   - Person: System.AssignedTo, System.CreatedBy, System.ChangedBy
+#   - Date: System.CreatedDate, Microsoft.VSTS.Scheduling.StartDate
+#   - Path: System.AreaPath, System.IterationPath
+#   - Number: Microsoft.VSTS.Scheduling.OriginalEstimate
+# ==============================================================================
+field_mappings:
+  # Core Identity Fields
+  subject: "System.Title"                              # Text (max 255 chars)
+  description: "System.Description"                    # HTML/Rich Text
+  
+  # State/Status Fields (dropdown - values mapped in status_mappings section)
+  status: "System.State"                               # Dropdown - varies by work item type
+  
+  # Priority Field (dropdown - values mapped in priority_mappings section)
+  priority: "Microsoft.VSTS.Common.Priority"           # Dropdown: 1-4
+  
+  # Assignment/People Fields
+  assigned_to: "System.AssignedTo"                     # Person field
+  author: "System.CreatedBy"                           # Person field (read-only in ADO)
+  
+  # Classification Fields
+  category: "Custom.Category"                          # Custom category field
+  project: "System.AreaPath"                           # Path/Tree dropdown (also System.TeamProject)
+  version: "System.IterationPath"                      # Path/Tree dropdown
+  
+  # Date/Time Fields
+  start_date: "Microsoft.VSTS.Scheduling.StartDate"    # Date field
+  due_date: "Microsoft.VSTS.Scheduling.DueDate"        # Date field
+  created_on: "System.CreatedDate"                     # DateTime (read-only in ADO)
+  updated_on: "System.ChangedDate"                     # DateTime (read-only in ADO)
+  closed_on: "Microsoft.VSTS.Common.ClosedDate"        # DateTime
+  
+  # Effort/Completion Fields
+  done_ratio: "Custom.PercentageDone"                  # Custom field: 10 (percentage done)
+  estimated_hours: "Microsoft.VSTS.Scheduling.OriginalEstimate"  # Number (hours)
+  
+  # Hierarchy/Relations (handled via relations API, not direct field mapping)
+  # parent: "System.LinkTypes.Hierarchy-Reverse"       # Parent link
+  # children: "System.LinkTypes.Hierarchy-Forward"     # Subtasks link
+  # relations: "System.LinkTypes.Related"              # Related issues link
+  
+  # Attachments (handled via attachments API)
+  # attachments: "AttachedFile-Reverse"                # Files/attachments
+  
+  # Comments/History (handled via comments API)
+  # journals: "System.History"                         # Comments and change history
+  # journals.user: "System.ChangedBy"                  # Last updated by person
+  
+  # Watchers (may need custom handling or skip)
+  # watchers: ""                                       # No direct ADO equivalent
+
+# ==============================================================================
+# CUSTOM FIELD MAPPING
+# Maps Redmine custom fields to ADO custom fields
+# ==============================================================================
+custom_field_mappings:
+  # Text/String Fields - Based on actual Redmine custom fields
+  "Department": "Custom.Department"
+  "Origin": "Custom.Origin"
+  "Initiative": "Custom.Initiative"
+  "Communications": "Custom.Communications"
+  "ITPPM Reference": "Custom.ITPPMReference"
+  
+  # List/Dropdown Fields
+  "Environment": "Custom.Origin"  # Map to closest ADO field or create new
+  "IM Category": "Custom.IMCategory"
+  
+  # Integer Fields
+  "Business Priority": "Microsoft.VSTS.Common.Priority"  # Could map to priority
+  # "Per Diem": "Custom.PerDiem"  # Would need to create in ADO
+  
+  # User Fields
+  # "Developer/QA": "System.AssignedTo"  # Could map to assigned user
+  
+  # Dropdown/List Fields (field name mapping only, values mapped below)
+  # "Environment": "Custom.Environment"
+  # "Platform": "Custom.Platform"
+  # "Severity": "Microsoft.VSTS.Common.Severity"
+  
+  # Date Fields
+  # "Target Release Date": "Custom.TargetReleaseDate"
+  # "Deployment Date": "Custom.DeploymentDate"
+  
+  # Boolean/Checkbox Fields
+  # "Customer Facing": "Custom.CustomerFacing"
+  # "Requires Documentation": "Custom.RequiresDocumentation"
+  
+  # Number Fields
+  # "Story Points": "Microsoft.VSTS.Scheduling.StoryPoints"
+  # "Business Value": "Microsoft.VSTS.Common.BusinessValue"
+  
+  # User/Person Fields
+  # "Reviewer": "Custom.Reviewer"
+  # "Technical Lead": "Custom.TechnicalLead"
+  
+  # Multi-select/Array Fields
+  # "Affected Components": "Custom.AffectedComponents"
+  # "Tags": "System.Tags"
+
+# ==============================================================================
+# CUSTOM FIELD VALUE MAPPINGS
+# Maps dropdown/list values for custom fields
+# ==============================================================================
+custom_field_value_mappings:
+  # Environment dropdown values
+  # Environment:
+  #   "Dev": "Development"
+  #   "QA": "Test"
+  #   "Staging": "Staging"
+  #   "Prod": "Production"
+  #   "Production": "Production"
+  
+  # Platform dropdown values
+  # Platform:
+  #   "Windows": "Windows"
+  #   "Linux": "Linux"
+  #   "MacOS": "macOS"
+  #   "Web": "Web Browser"
+  #   "Mobile": "Mobile"
+  #   "iOS": "iOS"
+  #   "Android": "Android"
+  
+  # Component dropdown values
+  # Component:
+  #   "UI": "User Interface"
+  #   "API": "Backend API"
+  #   "Database": "Database"
+  #   "Infrastructure": "Infrastructure"
+  
+  # Boolean field value mappings (if needed)
+  # CustomerFacing:
+  #   "1": "True"
+  #   "0": "False"
+  #   "Yes": "True"
+  #   "No": "False"
+
+# ==============================================================================
+# STATUS VALUE MAPPING
+# Maps Redmine status values to ADO state values
+# Note: ADO states depend on work item type and process template
+# ==============================================================================
+status_mappings:
+  # Issue work item type states
+  Issue:
+    "New": "New"
+    "In Progress": "Active"
+    "Resolved": "Resolved"
+    "Closed": "Closed"
+    "Feedback": "Resolved"
+    "Rejected": "Removed"
+    "To Do": "New"
+    "Doing": "Active"
+    "Done": "Closed"
+
+  # Default mapping for other work item types
+  default:
+    "New": "New"
+    "In Progress": "Active"
+    "Resolved": "Resolved"
+    "Closed": "Closed"
+    "On Hold": "New"
+    "Rejected": "Removed"
+
+# ==============================================================================
+# PRIORITY VALUE MAPPING
+# Maps Redmine priority values to ADO priority values
+# ADO Priority field values: 1 (Highest/Critical), 2 (High), 3 (Medium/Normal), 4 (Low)
+# ==============================================================================
+priority_mappings:
+  # Exact mapping from Redmine priority name to ADO priority number
+  # Based on actual Redmine priorities: Immediate, High, Normal, Low
+  "Immediate": 1
+  "High": 2
+  "Normal": 3
+  "Low": 4
+  "default": 3  # Default priority if no match found
+
+# ==============================================================================
+# SEVERITY VALUE MAPPING (for Bugs)
+# Maps Redmine priority/severity to ADO severity dropdown values
+# ADO Severity values: "1 - Critical", "2 - High", "3 - Medium", "4 - Low"
+# Only applies if you map a Redmine field to Microsoft.VSTS.Common.Severity
+# ==============================================================================
+severity_mappings:
+  # From Redmine custom "Severity" field or priority
+  "Critical": "1 - Critical"
+  "Blocker": "1 - Critical"
+  "High": "2 - High"
+  "Major": "2 - High"
+  "Medium": "3 - Medium"
+  "Normal": "3 - Medium"
+  "Low": "4 - Low"
+  "Minor": "4 - Low"
+  "Trivial": "4 - Low"
+  "default": "3 - Medium"
+
+# ==============================================================================
+# USER MAPPING
+# Maps Redmine users to ADO users (by email or display name)
+# ==============================================================================
+user_mappings:
+  # "redmine.username": "ado.user@domain.com"
+  # "john.doe": "john.doe@company.com"
+  # "jane.smith": "jane.smith@company.com"
+  # If not mapped, will attempt to match by email or name
+
+# ==============================================================================
+# PROJECT MAPPING
+# Maps Redmine projects to ADO area paths
+# ==============================================================================
+project_mappings:
+  # "redmine-project-identifier": "ADO Project\\Area\\Path"
+  # "web-app": "MyADOProject\\Web Team\\Frontend"
+  # "api-service": "MyADOProject\\Backend Team\\API"
+
+# ==============================================================================
+# MIGRATION OPTIONS
+# ==============================================================================
+migration_options:
+  # Preserve original IDs in description or title
+  preserve_redmine_id: true
+  # redmine_id_field: ""  # Not using a custom field - will add to description instead
+  
+  # Add link to original Redmine issue in ADO
+  add_redmine_link: true
+  
+  # Migrate attachments (via attachments API)
+  migrate_attachments: true
+  
+  # Migrate comments/journals (via comments API)
+  migrate_comments: true
+  migrate_last_notes: true                             # Include "Last notes" field
+  
+  # Migrate relations (links between issues)
+  migrate_relations: true
+  
+  # Migrate time entries
+  migrate_time_entries: false
+  
+  # Migrate watchers (Note: No direct ADO equivalent - may need custom handling)
+  migrate_watchers: false
+  
+  # Create subtasks as child work items (via hierarchy links)
+  migrate_subtasks: true
+  
+  # Preserve change history and "Last updated by"
+  preserve_update_history: true
+  
+  # Handle users not found in ADO
+  # Options: "skip", "assign_to_default", "create_as_unassigned"
+  missing_user_strategy: "create_as_unassigned"
+  
+  # Default user to assign if missing_user_strategy is "assign_to_default"
+  default_assigned_user: ""
+  
+  # Batch size for migration
+  batch_size: 50
+  
+  # Delay between API calls (milliseconds)
+  delay_ms: 100
+  
+  # Skip closed issues
+  skip_closed_issues: false
+  
+  # Date format for date fields
+  date_format: "YYYY-MM-DD"
+
+# ==============================================================================
+# RELATION TYPE MAPPING
+# Maps Redmine relation types to ADO link types
+# Based on the provided mapping table
+# ==============================================================================
+relation_mappings:
+  # Standard Redmine relations
+  "relates": "System.LinkTypes.Related"                # Related issues
+  "duplicates": "System.LinkTypes.Duplicate-Forward"
+  "duplicated": "System.LinkTypes.Duplicate-Reverse"
+  "blocks": "System.LinkTypes.Dependency-Forward"
+  "blocked": "System.LinkTypes.Dependency-Reverse"
+  "precedes": "System.LinkTypes.Dependency-Forward"
+  "follows": "System.LinkTypes.Dependency-Reverse"
+  "copied_to": "System.LinkTypes.Related"
+  "copied_from": "System.LinkTypes.Related"
+  
+  # Hierarchy relations (parent/child)
+  "parent": "System.LinkTypes.Hierarchy-Reverse"       # Parent task relationship
+  "children": "System.LinkTypes.Hierarchy-Forward"     # Subtasks relationship
+  
+  # Attachments (special handling via attachments API)
+  "attachments": "AttachedFile-Reverse"                # Files attached to work item
+
+# ==============================================================================
+# FIELD TRANSFORMATION RULES
+# Define custom transformations for specific fields
+# ==============================================================================
+field_transformations:
+  description:
+    # Prepend Redmine ID
+    prepend_template: "**Migrated from Redmine Issue #{{id}}**\n**Original URL:** {{url}}\n\n---\n\n"
+    # Append migration timestamp
+    append_template: "\n\n---\n*Migrated on: {{migration_date}}*"
+    
+  # Convert Redmine textile/markdown to ADO format
+  convert_markup: true
+  
+  # Handle Redmine user mentions (@username)
+  convert_mentions: true
+
+# ==============================================================================
+# VALIDATION RULES
+# Define validation rules for migration
+# ==============================================================================
+validation:
+  # Required fields that must have values
+  required_fields:
+    - "System.Title"
+    - "System.WorkItemType"
+  
+  # Maximum field lengths
+  max_lengths:
+    "System.Title": 255
+    "System.Tags": 400
+  
+  # Skip issues with validation errors
+  skip_invalid_issues: false
+
+# ==============================================================================
+# TAGS/LABELS MAPPING
+# Map Redmine categories or custom fields to ADO tags
+# ==============================================================================
+tags_mapping:
+  # Map from Redmine field
+  source_field: "category"  # or "tags" or custom field name
+  
+  # Tag prefix
+  tag_prefix: ""
+  
+  # Additional static tags to add to all migrated items
+  static_tags:
+    - "Migrated-From-Redmine"
